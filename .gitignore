@@ -1,0 +1,12 @@
+# lo que genera el programa (nunca se sube)
+datos/
+historial/
+*.xlsx
+~$*
+# Python y empaquetado
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+.venv/

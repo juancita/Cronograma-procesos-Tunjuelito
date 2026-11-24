@@ -1,0 +1,61 @@
+name: Empaquetar para Windows
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      PAQUETE: Cronogramas-SECOP-Tunjuelito
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller==6.11.1
+
+      - name: Pruebas
+        run: python -m unittest discover -s tests -v
+
+      - name: Compilar cronogramas.exe
+        run: pyinstaller --onefile --console --clean --name cronogramas run.py
+
+      - name: Prueba real contra SECOP II
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory prueba | Out-Null
+          Copy-Item config.ini prueba/
+          ./dist/cronogramas.exe --carpeta prueba --sin-abrir
+          if (-not (Test-Path "prueba/Seguimiento de cronogramas.xlsx")) { exit 1 }
+
+      - name: Armar el ZIP
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory $env:PAQUETE | Out-Null
+          Copy-Item dist/cronogramas.exe, "Actualizar cronogramas.bat", config.ini, LEEME.txt $env:PAQUETE/
+          Compress-Archive -Path $env:PAQUETE -DestinationPath "$env:PAQUETE.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PAQUETE }}
+          path: ${{ env.PAQUETE }}.zip
+
+      - name: Publicar versión (solo con etiqueta v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" "$env:PAQUETE.zip" --title "Cronogramas ${{ github.ref_name }}" --notes-file CAMBIOS.md

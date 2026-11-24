@@ -1,0 +1,18 @@
+CRONOGRAMAS DE PROCESOS - SECOP II
+==================================
+
+1. Descomprima esta carpeta donde la vaya a dejar (por ejemplo en Documentos). No la ejecute
+   desde dentro del ZIP.
+2. Doble clic en "Actualizar cronogramas.bat".
+   - Consulta SECOP II (datos abiertos) y tarda alrededor de un minuto.
+   - Al terminar abre "Seguimiento de cronogramas.xlsx".
+3. Trabaje sobre ese Excel. Las columnas con encabezado VERDE (nombre corto, responsable, estado de
+   gestion, observaciones, hito gestionado) se conservan en la siguiente actualizacion.
+4. Para actualizar: cierre el Excel y vuelva a dar doble clic en el .bat.
+
+Carpetas que crea el programa (no las borre: son la memoria del seguimiento):
+   datos\       la base local (historial de fechas, novedades y gestion del equipo)
+   historial\   una copia del Excel por cada actualizacion
+
+Si Windows muestra "Windows protegio su PC": "Mas informacion" > "Ejecutar de todas formas".
+Si sale un error de conexion o de certificado: revise internet o pruebe desde otra red y avise.
