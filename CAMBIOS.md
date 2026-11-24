@@ -1,5 +1,8 @@
 # Cambios
 
+## 1.0.1
+- Las pruebas cierran la base local antes de borrar la carpeta temporal (en Windows fallaban).
+
 ## 1.0.0
 - Primera versión: consulta SECOP II (procesos, cronogramas y adendas) solo de la entidad configurada,
   filtra los procesos abiertos sin adjudicar y arma el Excel de seguimiento.

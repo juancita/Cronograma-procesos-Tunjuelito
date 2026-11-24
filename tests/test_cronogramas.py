@@ -55,7 +55,7 @@ class Reglas(unittest.TestCase):
 
 class Ciclo(unittest.TestCase):
     def test_dos_actualizaciones_novedades_y_gestion(self):
-        with tempfile.TemporaryDirectory() as d:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as d:
             cfg = config.cargar(pathlib.Path(d))
             A = almacen.Almacen(almacen.abrir(cfg.base))
             procesos = [fila("CO1.REQ.1", "CO1.BDOS.9", ultpub="2026-09-21"),
@@ -100,8 +100,11 @@ class Ciclo(unittest.TestCase):
                          else p for p in procesos2]
             A.guardar(e3, t3, procesos3, crono2, [], [])
             self.assertEqual([x["tipo"] for x in A.novedades(e3)], ["Salió del seguimiento"])
-            self.assertEqual(sqlite3.connect(cfg.base).execute(
+            otra = sqlite3.connect(cfg.base)
+            self.assertEqual(otra.execute(
                 "SELECT en_seguimiento FROM proceso WHERE id_portafolio='CO1.BDOS.9'").fetchone()[0], 0)
+            otra.close()
+            A.db.close()          # Windows no deja borrar un archivo abierto
 
 
 if __name__ == "__main__":
